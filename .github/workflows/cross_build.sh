@@ -423,4 +423,4 @@ build_qbittorrent
 "${RUNNER_CHECKER}" /tmp/qbittorrent-nox* --version 2>/dev/null
 
 # archive qbittorrent
-zip -j9v "${SELF_DIR}/qbittorrent-nox_${CROSS_HOST}_static.zip" /tmp/qbittorrent-nox*
+zip -j9v "${SELF_DIR}/qbittorrent-enhanced-nox_${CROSS_HOST}_static.zip" /tmp/qbittorrent-nox*

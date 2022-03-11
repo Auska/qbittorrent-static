@@ -48,7 +48,7 @@ jobs:
         run: .github/workflows/cross_build.sh
       - uses: actions/upload-artifact@v2
         with:
-          name: qbittorrent-nox_${{ matrix.cross_host }}_static
+          name: qbittorrent-enhanced-nox_${{ matrix.cross_host }}_static
           path: |
             /tmp/qbittorrent-nox*
       - name: Upload Github Assets
@@ -56,6 +56,6 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ".github/workflows/qbittorrent-nox_${{ matrix.cross_host }}_static.zip"
+          file: ".github/workflows/qbittorrent-enhanced-nox_${{ matrix.cross_host }}_static.zip"
           tag: ${{ github.ref }}
           overwrite: true

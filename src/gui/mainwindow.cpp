@@ -136,7 +136,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     Preferences *const pref = Preferences::instance();
     m_uiLocked = pref->isUILocked();
-    setWindowTitle("qBittorrent " QBT_VERSION);
+    setWindowTitle("qBittorrent Enhanced Edition " QBT_VERSION);
     m_displaySpeedInTitle = pref->speedInTitleBar();
     // Setting icons
 #ifndef Q_OS_MACOS
@@ -1626,7 +1626,7 @@ void MainWindow::reloadSessionStats()
 
     if (m_displaySpeedInTitle)
     {
-        setWindowTitle(tr("[D: %1, U: %2] qBittorrent %3", "D = Download; U = Upload; %3 is qBittorrent version")
+        setWindowTitle(tr("[D: %1, U: %2] qBittorrent Enhanced Edition %3", "D = Download; U = Upload; %3 is qBittorrent version")
             .arg(Utils::Misc::friendlyUnit(status.payloadDownloadRate, true)
                 , Utils::Misc::friendlyUnit(status.payloadUploadRate, true)
                 , QBT_VERSION));
@@ -1816,7 +1816,7 @@ void MainWindow::on_actionSpeedInTitleBar_triggered()
     if (m_displaySpeedInTitle)
         reloadSessionStats();
     else
-        setWindowTitle("qBittorrent " QBT_VERSION);
+        setWindowTitle("qBittorrent Enhanced Edition " QBT_VERSION);
 }
 
 void MainWindow::on_actionRSSReader_triggered()
@@ -1913,8 +1913,9 @@ void MainWindow::handleUpdateCheckFinished(ProgramUpdater *updater, const bool i
     const QString newVersion = updater->getNewVersion();
     if (!newVersion.isEmpty())
     {
+        const QString content = updater->getNewContent();
         const QString msg {tr("A new version is available.") + "<br/>"
-            + tr("Do you want to download %1?").arg(newVersion) + "<br/><br/>"
+            + tr("Do you want to download %1?%2").arg(newVersion).arg(content) + "<br/><br/>"
             + QString::fromLatin1("<a href=\"https://www.qbittorrent.org/news.php\">%1</a>").arg(tr("Open changelog..."))};
         auto *msgBox = new QMessageBox {QMessageBox::Question, tr("qBittorrent Update Available"), msg
             , (QMessageBox::Yes | QMessageBox::No), this};
@@ -1935,8 +1936,9 @@ void MainWindow::handleUpdateCheckFinished(ProgramUpdater *updater, const bool i
     {
         if (invokedByUser)
         {
+            const QString nextUpdate = updater->getNextUpdate();
             auto *msgBox = new QMessageBox {QMessageBox::Information, QLatin1String("qBittorrent")
-                , tr("No updates available.\nYou are already using the latest version.")
+                , tr("No updates available.\nYou are already using the latest version.\n\n%1").arg(nextUpdate)
                 , QMessageBox::Ok, this};
             msgBox->setAttribute(Qt::WA_DeleteOnClose);
             connect(msgBox, &QDialog::finished, this, cleanup);
