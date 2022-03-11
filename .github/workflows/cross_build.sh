@@ -12,7 +12,7 @@ set -o pipefail
 
 # match qt version prefix. E.g 5 --> 5.15.2, 5.12 --> 5.12.10
 export QT_VER_PREFIX="6"
-export LIBTORRENT_BRANCH="RC_2_0"
+export LIBTORRENT_BRANCH="RC_12_PE"
 
 # Ubuntu mirror for local building
 if [ x"${USE_CHINA_MIRROR}" = x1 ]; then
@@ -84,7 +84,7 @@ i686-*-mingw*)
 esac
 
 export QT_VER_PREFIX="6"
-export LIBTORRENT_BRANCH="RC_2_0"
+export LIBTORRENT_BRANCH="RC_12_PE"
 export CROSS_ROOT="${CROSS_ROOT:-/cross_root}"
 # strip all compiled files by default
 export CFLAGS='-s'
@@ -338,7 +338,7 @@ prepare_qt() {
 prepare_libtorrent() {
   echo "libtorrent-rasterbar branch: ${LIBTORRENT_BRANCH}"
   if [ ! -d "/usr/src/libtorrent-rasterbar-${LIBTORRENT_BRANCH}/" ]; then
-    libtorrent_git_url="https://github.com/arvidn/libtorrent.git"
+    libtorrent_git_url="https://github.com/ChisBread/libtorrent.git"
     if [ x"${USE_CHINA_MIRROR}" = x1 ]; then
       libtorrent_git_url="https://ghproxy.com/${libtorrent_git_url}"
     fi
