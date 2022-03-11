@@ -1,0 +1,61 @@
+name: Build and Release
+
+on:
+  push:
+    branches:
+      - "*"
+  pull_request:
+    branches:
+      - "*"
+  release:
+    types:
+      - released
+
+jobs:
+  # cross compile for some other platforms, like arm, mips, etc.
+  cross-compile:
+    runs-on: ubuntu-latest
+    container: "ubuntu:20.04"
+    strategy:
+      fail-fast: false
+      matrix:
+        cross_host:
+          # cross toolchain downloads from: https://musl.cc/
+          # you need to find the name ${cross_host}-cross.tgz
+          - arm-linux-musleabi
+          # Waiting this issue to be resolved: https://github.com/zlib-ng/zlib-ng/issues/1138
+          # - arm-linux-musleabihf
+          - aarch64-linux-musl
+          # - mips-linux-musl
+          # - mipsel-linux-musl
+          # - mips64-linux-musl
+          # - mips64el-linux-musl
+          - x86_64-linux-musl
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: actions/cache@v2
+        with:
+          path: |
+            /usr/src/
+            /var/cache/apt/
+          key: cross-build-dependencies-cache-${{ matrix.cross_host }}-${{ github.sha }}
+          restore-keys: |
+            cross-build-dependencies-cache-${{ matrix.cross_host }}-
+      - name: cross compile nox-static
+        env:
+          CROSS_HOST: "${{ matrix.cross_host }}"
+        run: .github/workflows/cross_build.sh
+      - uses: actions/upload-artifact@v2
+        with:
+          name: qbittorrent-nox_${{ matrix.cross_host }}_static
+          path: |
+            /tmp/qbittorrent-nox*
+      - name: Upload Github Assets
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ".github/workflows/qbittorrent-nox_${{ matrix.cross_host }}_static.zip"
+          tag: ${{ github.ref }}
+          overwrite: true
