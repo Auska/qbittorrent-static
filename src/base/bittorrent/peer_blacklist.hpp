@@ -22,26 +22,22 @@ bool is_bad_peer(const lt::peer_info& info)
 // Unknown Peer filter
 bool is_unknown_peer(const lt::peer_info& info)
 {
-  QString country = Net::GeoIPManager::instance()->lookup(QHostAddress(info.ip.data()));
-  return info.client.find("Unknown") != std::string::npos && country == QLatin1String("CN");
+  unsigned short port = info.ip.port();
+  return port >= 65000 || info.client.find("Unknown") != std::string::npos;
 }
 
 // Offline Downloader filter
 bool is_offline_downloader(const lt::peer_info& info)
 {
-  unsigned short port = info.ip.port();
   QString country = Net::GeoIPManager::instance()->lookup(QHostAddress(info.ip.data()));
-  return port >= 65000 && country == QLatin1String("CN") && info.client.find("Transmission") != std::string::npos;
+  return country != QLatin1String("CN");
 }
 
 // BitTorrent Media Player Peer filter
 bool is_bittorrent_media_player(const lt::peer_info& info)
 {
-  if (info.client.find("StellarPlayer") != std::string::npos) {
-    return true;
-  }
-  std::regex player_filter("-(UW\\w{4}|SP(([0-2]\\d{3})|(3[0-5]\\d{2})))-");
-  return !!std::regex_match(info.pid.data(), info.pid.data() + 8, player_filter);
+  std::regex wl_filter("-(qB|TR3|UT)(\\S+)-");
+  return !std::regex_match(info.pid.data(), info.pid.data() + 8, wl_filter);
 }
 
 
